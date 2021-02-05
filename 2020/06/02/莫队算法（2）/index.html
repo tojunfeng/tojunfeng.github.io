@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="code-HeKMuEE69t">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="本节主要针对普通的莫队算法给出一些应用  DQUERY - D-query 对于给定的数列$\{a_n\}$，有$q$次询问，每次询问区间$[l,r]$中不同的数的个数 $1\le n,q \le 10^5$  这是一道莫队的模板题，也是上一节用到的例题。通过离线算法主要有$n\sqrt n$的莫队和$n\log n$的树状数组两种做法，在线查询的话可以用$n\log n$的主席树维护。 此处笔者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="莫队算法（2）">
+<meta property="og:url" content="http://example.com/2020/06/02/%E8%8E%AB%E9%98%9F%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本节主要针对普通的莫队算法给出一些应用  DQUERY - D-query 对于给定的数列$\{a_n\}$，有$q$次询问，每次询问区间$[l,r]$中不同的数的个数 $1\le n,q \le 10^5$  这是一道莫队的模板题，也是上一节用到的例题。通过离线算法主要有$n\sqrt n$的莫队和$n\log n$的树状数组两种做法，在线查询的话可以用$n\log n$的主席树维护。 此处笔者">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-02T02:38:37.000Z">
+<meta property="article:modified_time" content="2021-02-05T01:04:56.700Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="根号算法">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2020/06/02/%E8%8E%AB%E9%98%9F%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>莫队算法（2） | Hexo</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Hexo</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/02/%E8%8E%AB%E9%98%9F%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          莫队算法（2）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-02 10:38:37" itemprop="dateCreated datePublished" datetime="2020-06-02T10:38:37+08:00">2020-06-02</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-02-05 09:04:56" itemprop="dateModified" datetime="2021-02-05T09:04:56+08:00">2021-02-05</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本节主要针对普通的莫队算法给出一些应用</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.spoj.com/problems/DQUERY/">DQUERY - D-query</a></p>
+<p>对于给定的数列$\{a_n\}$，有$q$次询问，每次询问区间$[l,r]$中不同的数的个数</p>
+<p>$1\le n,q \le 10^5$</p>
+</blockquote>
+<p>这是一道莫队的模板题，也是上一节用到的例题。通过离线算法主要有$n\sqrt n$的莫队和$n\log n$的树状数组两种做法，在线查询的话可以用$n\log n$的主席树维护。</p>
+<p>此处笔者想要强调的是莫队算法中排序时的一种普遍的优化——分奇偶排序。一般情况下，奇偶优化能够使得程序运行时间缩短至未优化时的一半。</p>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">struct</span> <span class="token class-name">QQ</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token keyword">int</span> l<span class="token punctuation">,</span>r<span class="token punctuation">,</span>id<span class="token punctuation">;</span>
+	<span class="token keyword">bool</span> <span class="token keyword">operator</span> <span class="token operator">&lt;</span><span class="token punctuation">(</span><span class="token keyword">const</span> QQ<span class="token operator">&amp;</span> tmp<span class="token punctuation">)</span> <span class="token keyword">const</span><span class="token punctuation">&#123;</span>
+		<span class="token keyword">if</span><span class="token punctuation">(</span>l<span class="token operator">/</span>BLOCK<span class="token operator">==</span>tmp<span class="token punctuation">.</span>l<span class="token operator">/</span>BLOCK<span class="token punctuation">)</span><span class="token punctuation">&#123;</span> <span class="token comment">//奇偶块的右端点升降交替排序</span>
+			<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span>l<span class="token operator">/</span>BLOCK<span class="token punctuation">)</span><span class="token operator">%</span><span class="token number">2</span><span class="token operator">==</span><span class="token number">0</span><span class="token punctuation">)</span> <span class="token keyword">return</span> r<span class="token operator">&lt;</span>tmp<span class="token punctuation">.</span>r<span class="token punctuation">;</span> <span class="token comment">//偶数块升序</span>
+			<span class="token keyword">else</span> <span class="token keyword">return</span> r<span class="token operator">></span>tmp<span class="token punctuation">.</span>r<span class="token punctuation">;</span> <span class="token comment">//奇数块降序</span>
+		<span class="token punctuation">&#125;</span>
+		<span class="token keyword">return</span> l<span class="token operator">&lt;</span>tmp<span class="token punctuation">.</span>l<span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>q<span class="token punctuation">[</span>maxn<span class="token punctuation">]</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<hr>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P3604">洛谷P3604 美好的每一天</a></p>
+<p>对于给定的字符串$s$，有$q$次询问，每次询问区间$s_l \cdots s_r$组成的字符串中有多少个字串经过重排后可以组成一个回文串</p>
+<p>示例：</p>
+<p>输入<br>zzqzzq<br>1 6<br>2 4<br>1 1<br>输出<br>16<br>4<br>1</p>
+</blockquote>
+<p>先剖析问题的本质，字符串重排后能够组成回文串，也就是说，</p>
+<ul>
+<li>对于字符串长度为偶数时，每个字母出现的次数都为偶数次</li>
+<li>对于字符串长度为奇数时，最多只有一个字母，出现的字符串长度为奇数次</li>
+</ul>
+<p>问题就转换为，询问一个字符串中有多少个字串，其最多只有一个字母数出现的次数为奇数。</p>
+<p>我们就有一个比较显然的策略就是，对于每个查询区间，我们暴力遍历它的每一个字串，然后判断该字串有多少个字母出现次数小于等于1。于是我们就得到了一个$O(n^3)$的算法。</p>
+<p>显然我们可以通过按照莫队算法的方式对询问进行离线组织，这样的话还是按照上述的暴力更新每次移动左右端点时答案的变化，我们可以得到一个$O(n^2\sqrt n)$的算法。这还是不够。</p>
+<p>事实上，我们统计的是每种字母出现的次数，而我们只关心每种字母出现次数的奇偶性，而且字母种类只有26种，那么我们是否可以根据这两点进行优化呢？</p>
+<p>答案是肯定的。</p>
+<p>根据上面的分析，我们只想要这个串的部分信息，那么每一个任意长度的字符串都是可以通过一个26位的二进制串来表示的，二进制串的第$i$位就表示原字符串中字母$a+i$出现次数的奇偶性。</p>
+<p>进一步的分析发现，对于题目给出的原串$s$我们自需要求出它所有前缀的二进制表示$pre_i$就能得到原串所有子串的二进制表示（对于任意个子串$s_l \cdots s_r$，它的二进制表示为 $pre_r \bigoplus pre_{l-1} $ ）</p>
+<p>分析到此，我们就可以考虑如何让快速的从$[l,r]$更新到$[l,r+1]$了。每次增加一个右端点进来，就去查看对于该右端点，区间内有多少个左端点与之组合能够对答案产生贡献。这个过程只需要枚举所有能够产生贡献的那27种最终状态（$0 \bigcup 2^i,0 \le i\le 26$）反向计算，那些左端点的$pre_i$应该满足什么样的条件。就能快速得到答案。</p>
+<p>问题的时间复杂度为$O(26n\sqrt n)$。</p>
+<hr>
+<p><strong>时间复杂度再分析</strong></p>
+<p>对于莫队算法，主要需要考虑两个问题</p>
+<ul>
+<li>一是移动左右端点的时候，相关信息的维护，一般要求是在$O(1)$，有时$O(\log n)$也可以</li>
+<li>二是当左右端点确定后如何统计答案，这一步的时间复杂度需要做到$O(\sqrt n)$或者$O(\sqrt n \log n)$</li>
+</ul>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://codeforces.com/problemset/problem/940/F">CF940F Machine Learning</a>的简化版（原题要求单点修改）</p>
+<p>给你一个数组$\{a_n\}$，每次询问区间$[l,r]$每个数字出现次数的$mex$</p>
+<p>$mex$指的是一些数字中最小的未出现的自然数。值得注意的是，区间$[l,r]$总有数字是没有出现过的，所以答案不可能为0。</p>
+<p>例如：对于数列$\{100,23,5,7,7,7\}$，其中有无穷多个数出现了$0$次，有三个数出现了$1$次，有一个数出现了$3$次。所以这个数列每个数出现次数的$mex$是$2$（没有哪一个数出现了$2$次，其$2$是最小的）</p>
+</blockquote>
+<p>最直接的想法就是暴力统计每个查询区间的数出现了多少次，然后依次扫描寻找没有任何数字出现了$ans$次。</p>
+<p>单次统计区间信息需要$O(n)$，可以确定的是答案一定不会超过$\sqrt n$，即每次扫描的时间复杂度为$O(\sqrt n)$。故总的时间复杂度为$O(n^2)$。</p>
+<p>利用莫队算法，每次移动左右端点的时间复杂度为$O(1)$，需要移动$O(n\sqrt n)$次端点。每次询问答案的时间复杂度为$O(\sqrt n)$，共需要询问$O(n)$次答案。故莫队算法总的的时间复杂度为$O(n\sqrt n)$。</p>
+<hr>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://codeforces.com/problemset/problem/1000/F">CF1000F One Occurrence</a></p>
+<p>给定一个长度为$n$的序列$\{a_n\}$，$m$次询问，每次询问给定一个区间$[l,r]$，如果这个区间里存在只出现一次的数，输出这个数（如果有多个就输出任意一个），没有就输出$0$。</p>
+<p>$n,m \le5*10^5$</p>
+</blockquote>
+<p>使用莫队的时候发现某个数字是第一次出现，就把当前数字加入到$ans$数组中，如果某个数字是第二次出现，就需要将那个数字从$ans$数组中删除，关键是出现了删除操作，使得问题变得更加复杂了。</p>
+<p>如果我们使用平衡树来代替$ans$数组，插入和删除的时间复杂度均为$O(\log n)$那么总的时间复杂度为$O(n\sqrt n\log n)$。显然这个时间复杂度无法在规定的时间内给出答案。</p>
+<p>根据上面我们所做出的分析，我们可以像线段树一样使用一种懒操作，即对删除操作打标记。维护一个栈，当一个元素不在栈中的时候，那他一定不在$ans$数组里面。当我们要删除某个元素的时候，只需要标记一下栈中的某个元素已被删除，即时它仍然在栈中。</p>
+<p>那么每次询问答案的时候就依次访问栈内的元素，如果元素无效将其出栈，否则输出该元素。</p>
+<p>上面的懒删除操作的准正确性是显然的。但是时间复杂度是多少呢？</p>
+<p>对于每次区间移动时间开销显然是$O(1)$的，但是每次的答案统计的时间复杂度呢？每个数的只会在区间移动的时候进栈，也就是最多只有$O(n\sqrt n)$次进栈操作，而每次统计答案的时候都是出栈操作，故统计答案的总的操作数也是$O(n\sqrt n)$级别的。</p>
+<p>综上，时间复杂度为$O(n\sqrt n)$。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%A0%B9%E5%8F%B7%E7%AE%97%E6%B3%95/" rel="tag"># 根号算法</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/31/%E8%8E%AB%E9%98%9F%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89/" rel="prev" title="莫队算法（1）">
+                  <i class="fa fa-chevron-left"></i> 莫队算法（1）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/02/04/%E5%88%86%E5%9D%97%E7%AE%97%E6%B3%951/" rel="next" title="分块算法1">
+                  分块算法1 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>
