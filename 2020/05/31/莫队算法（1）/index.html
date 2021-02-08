@@ -21,7 +21,7 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
 <meta name="description" content="莫队算法莫队算法主要用于解决离线的区间问题。一般来说时间复杂度为$O(n\sqrt n)$，对于带修改的莫队算法时间复杂度一般为$O(n^{5&#x2F;3})$。 普通莫队考虑这样一个问题：  对于数列 ${a_n}$ 有 $n$ 次询问，每次询问区间 $[l,r]$ 中不同的数的个数。 $n \le 100000$   ,  $1\le l \le r \le 100000$  一个很显然的想法是，对于">
 <meta property="og:type" content="article">
@@ -381,7 +381,7 @@
 </li>
 </ul>
 <p>事实上，这种构造方案相当于将所有的区间分成了 $\frac{n}{block}$ 个块</p>
-<p>我们还是将每个区间看作二维平面的点，那么这个示意图如下：<br><img data-src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-41-18-1590936967733.png" alt="示例图" style="zoom: 33%;" /></p>
+<p>我们还是将每个区间看作二维平面的点，那么这个示意图如下：<br><img src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-41-18-1590936967733.png" alt="示例图" style="zoom: 33%;" /></p>
 <p>蓝色线中的点表示同一个块中的点之间的转移排序顺序，而紫色的线表示不同块之间的转移顺序。</p>
 <p>容易证明，紫色的线只有$\frac{n}{block}=\sqrt n$条（我们先默认$block=\sqrt n$ ），而每条紫线的x坐标之差不超过$\sqrt n$，y坐标之差不超过$n$。故紫线所用的所有开销为$O(n\sqrt n)$。</p>
 <p>蓝色的线最多有$n-1$条。每条蓝色的线的x坐标之差不超过$block = \sqrt n$ 。而在单个块中累积的y坐标之差之和不超过$n$。故蓝线所有的开销为$O(n\sqrt n)$。</p>
@@ -467,7 +467,6 @@
 
   
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
 
   

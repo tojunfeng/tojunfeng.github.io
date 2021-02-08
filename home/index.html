@@ -21,7 +21,7 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.2.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
 <meta property="og:type" content="website">
 <meta property="og:title" content="大琛的复活甲">
@@ -535,7 +535,7 @@ mathjax: true</span>
 <h3 id="分块-1"><a href="#分块-1" class="headerlink" title="分块"></a>分块</h3><p>从上面的分析我们得到了两种修改-查询时间复杂度分别为$O(1)-O(n)$和$O(n)-O(1)$的算法。分块要做的事情正是在上面两种算法中寻找一个平衡点。</p>
 <p>如何寻找这个平衡点呢？</p>
 <p>假如我们把数列$\{a_n\}$前后均等的分成两个部分（两块），在这两个部分中分别（互不干扰的）应用前缀和的算法，可以发现对于单点修改操作就变为了$O(\frac{n}{2})$，而区间查询的时间复杂度变为$O(2)$（当查询区间横跨两块的时候）。</p>
-<p><img data-src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-42-07-1591365873772.png" alt=""></p>
+<p><img src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-42-07-1591365873772.png" alt=""></p>
 <p>同样的假如我们把数列$\{a_n\}$前后均等的分成$m$个块呢？对每个块都单独使用前缀和的算法，可以发现对于单点修改操作就变为了$O(\frac{n}{m})$，而区间查询的时间复杂度变为$O(m)$</p>
 <p>现在问题我们就得到了很多个修改-查询时间复杂度为$O(\frac{n}{m})-O(m)$的算法。事实上我们发现其实一开始就直接得到的$O(1)-O(n)$的朴素算法就是一种分块的特殊情况（当$m=n$时）</p>
 <p>如何确定$m$的值使得$\max\{\frac{n}{m},m\}$最小呢？最小为多少呢？这个$\max\{\frac{n}{m},m\}$就是算法的瓶颈。</p>
@@ -546,7 +546,7 @@ mathjax: true</span>
 <p>至此，我们就已经用分块算法在$O(n\sqrt n)$内解决了上面的问题。</p>
 <h3 id="分块再分析"><a href="#分块再分析" class="headerlink" title="分块再分析"></a>分块再分析</h3><p>事实上上面我们得到的是 $O(\sqrt n)-O(\sqrt n)$算法。</p>
 <p>分析上面的算法发现，每次查询的时候，对于$[l,r]$之间的那些整块（蓝色块）都是只需要查询块内元素的总和，只有边角信息（红色块）才需要做朴素算法那样的$p_j-p_i$进行查询。</p>
-<p><img data-src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-42-01-1591365883862.png" alt=""></p>
+<p><img src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-42-01-1591365883862.png" alt=""></p>
 <p>假如我们在每个块中再维护一个额外的信息——块内值的和，而不在维护块内的前缀和，会发送什么样的变化呢？</p>
 <p>这种分块的方法对于修改操作来说时间复杂度将为了$O(1)$，而查询操作的时间复杂度为$O(\sqrt n)$（对于边角信息使用朴素算法扫描，也最多只会有$\sqrt n$个零散点），故修改-查询时间复杂度变为了$O(1)-O(\sqrt n)$。注这种算法的查询操作的常数比上面的查询操作要大。</p>
 <p>通过上面的尝试，我们不禁会想，是否存在一种修改-查询时间复杂度$O(\sqrt n)-O(1)$的算法呢？答案是肯定的。我们只需要在修改-查询时间复杂度为$O(1)-O(\sqrt n)$的算法基础上记录一下块内和的前缀信息，再记录块内的前缀信息，就能使修改-查询时间复杂度$O(\sqrt n)-O(1)$。</p>
@@ -880,7 +880,7 @@ mathjax: true</span>
 </li>
 </ul>
 <p>事实上，这种构造方案相当于将所有的区间分成了 $\frac{n}{block}$ 个块</p>
-<p>我们还是将每个区间看作二维平面的点，那么这个示意图如下：<br><img data-src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-41-18-1590936967733.png" alt="示例图" style="zoom: 33%;" /></p>
+<p>我们还是将每个区间看作二维平面的点，那么这个示意图如下：<br><img src="https://gitee.com/tojunfeng/images/raw/master//img/fix-dir/myblog/post-images/2021-02-04-09-41-18-1590936967733.png" alt="示例图" style="zoom: 33%;" /></p>
 <p>蓝色线中的点表示同一个块中的点之间的转移排序顺序，而紫色的线表示不同块之间的转移顺序。</p>
 <p>容易证明，紫色的线只有$\frac{n}{block}=\sqrt n$条（我们先默认$block=\sqrt n$ ），而每条紫线的x坐标之差不超过$\sqrt n$，y坐标之差不超过$n$。故紫线所用的所有开销为$O(n\sqrt n)$。</p>
 <p>蓝色的线最多有$n-1$条。每条蓝色的线的x坐标之差不超过$block = \sqrt n$ 。而在单个块中累积的y坐标之差之和不超过$n$。故蓝线所有的开销为$O(n\sqrt n)$。</p>
@@ -1319,7 +1319,6 @@ num（n）\leq (log_2^n)^2</script><p>结论发现  $10^6$ 范围的数全部满
 
   
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
 
   
